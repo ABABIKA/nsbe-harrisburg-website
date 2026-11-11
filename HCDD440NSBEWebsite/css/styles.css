@@ -1,0 +1,106 @@
+/* NSBE brand colors, sampled from the logo: green, yellow, red, black */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap");
+
+:root {
+  --black: #111111;
+  --green: #2eab4f;        /* logo "N" green */
+  --green-dark: #1c7a37;   /* darker green so white text stays readable */
+  --yellow: #ffe100;       /* logo lightning bolts */
+  --red: #e8212b;          /* logo flame */
+  --bg: #f6f6f2;
+  --ink: #1a1a1a;
+  --card: #ffffff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.65;
+}
+
+/* Header */
+header { background: var(--black); color: #fff; border-bottom: 5px solid var(--yellow); }
+header .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+header h1 { font-size: 1.1rem; font-weight: 800; letter-spacing: .02em; margin: 14px 0; }
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 18px;
+  padding-bottom: 3px;
+  border-bottom: 3px solid transparent;
+}
+nav a:hover { border-bottom-color: var(--green); }
+nav a.active { border-bottom-color: var(--yellow); }
+
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+main { padding: 28px 0 56px; }
+
+/* Headings */
+h2 {
+  color: var(--black);
+  font-weight: 800;
+  font-size: 2rem;
+  display: inline-block;
+  padding-bottom: 4px;
+  border-bottom: 5px solid var(--green);
+}
+h3 { font-weight: 700; color: var(--green-dark); }
+
+/* Cards */
+.card {
+  background: var(--card);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+  border-top: 5px solid var(--green);
+  box-shadow: 0 1px 4px rgba(0,0,0,.12);
+}
+.values { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.values .card { margin: 0; }
+.values .card:nth-child(3n+2) { border-top-color: var(--yellow); }
+.values .card:nth-child(3n) { border-top-color: var(--red); }
+.values h3 { margin-top: 0; }
+
+.hero {
+  background: var(--card);
+  border-left: 8px solid var(--yellow);
+  padding: 20px;
+  border-radius: 8px;
+  margin: 16px 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,.12);
+}
+ul.objectives li { margin-bottom: 8px; }
+ul.objectives li::marker { color: var(--green); }
+
+/* Resources */
+.links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.links a.card { text-decoration: none; color: inherit; display: block; }
+.links a.card:hover { outline: 3px solid var(--yellow); }
+
+/* Events */
+.event { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+.event h3 { margin: 0 0 4px; }
+.event .meta { color: #555; font-size: .95rem; margin: 0; }
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  background: var(--green-dark);
+  color: #fff;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+.btn:hover { background: var(--black); color: var(--yellow); }
+
+a:focus-visible, .btn:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+
+/* Footer */
+footer { background: var(--black); color: #ddd; text-align: center; padding: 18px; font-size: .9rem; border-top: 5px solid var(--green); }
+footer a { color: var(--yellow); }

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "sample-1",
+    "name": "General Body Meeting (sample)",
+    "description": "Placeholder shown only if Discover East can't be reached.",
+    "location": "Penn State Harrisburg",
+    "startsOn": "2026-12-01T23:00:00Z",
+    "endsOn": "2026-12-02T00:00:00Z",
+    "url": "https://psuharrisburg.campuslabs.com/engage/organization/national-society-of-black-engineers"
+  }
+]
