@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { SqliteStore } from "../db/sqlite";
-import { resetRateLimits, signIn, signUp } from "./accounts";
+import { rateLimitEntries, resetRateLimits, signIn, signUp } from "./accounts";
 
 let store: SqliteStore;
 
@@ -115,5 +115,26 @@ describe("signIn", () => {
       { now: t0 + 16 * 60 * 1000 },
     );
     expect(later.ok).toBe(true);
+  });
+
+  it("counts attempts that are still in flight, so parallel guesses cannot bypass the lock", async () => {
+    const wrong = Array.from({ length: 20 }, () =>
+      signIn(store, { email: good.email, password: "bad-pass1" }),
+    );
+    const right = signIn(store, { email: good.email, password: good.password });
+    const results = await Promise.all([...wrong, right]);
+    expect(results[results.length - 1].ok).toBe(false);
+    expect(results.filter((r) => r.ok).length).toBe(0);
+  });
+
+  it("does not store rate-limit entries for absurdly long emails", async () => {
+    resetRateLimits();
+    await signIn(store, { email: "a".repeat(300) + "@x.com", password: "whatever1" });
+    expect(rateLimitEntries()).toBe(0);
+  });
+
+  it("rejects an over-long password at sign-in without throwing", async () => {
+    const r = await signIn(store, { email: good.email, password: "a1".repeat(5000) });
+    expect(r).toEqual({ ok: false, message: "Incorrect email or password." });
   });
 });

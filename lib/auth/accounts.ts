@@ -92,9 +92,14 @@ export function resetRateLimits(): void {
   failures.clear();
 }
 
+export function rateLimitEntries(): number {
+  return failures.size;
+}
+
 function recentFailures(email: string, now: number): number[] {
   const recent = (failures.get(email) ?? []).filter((t) => now - t < WINDOW_MS);
-  failures.set(email, recent);
+  if (recent.length) failures.set(email, recent);
+  else failures.delete(email);
   return recent;
 }
 
@@ -111,9 +116,17 @@ export async function signIn(
   const email = normalizeEmail(str(input.email));
   const password = str(input.password);
 
-  if (recentFailures(email, now).length >= MAX_FAILURES) {
+  // No real email is this long; refusing early keeps attacker-chosen keys
+  // out of the in-memory table.
+  if (email.length > 254) return BAD_LOGIN;
+
+  const recent = recentFailures(email, now);
+  if (recent.length >= MAX_FAILURES) {
     return { ok: false, message: "Too many attempts. Try again in a few minutes." };
   }
+  // Count this attempt now, before the slow password check, so parallel
+  // guesses cannot all slip under the limit. A success clears it below.
+  failures.set(email, [...recent, now]);
 
   const record = await store.findUserByEmail(email);
   let valid = false;
@@ -127,10 +140,7 @@ export async function signIn(
     }
   }
 
-  if (!record || !valid) {
-    failures.set(email, [...recentFailures(email, now), now]);
-    return BAD_LOGIN;
-  }
+  if (!record || !valid) return BAD_LOGIN;
   failures.delete(email);
   return { ok: true, user: toUser(record) };
 }

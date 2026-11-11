@@ -96,10 +96,13 @@ export class SqliteStore implements Store {
       role: patch.role ?? current.role,
       title: patch.title === undefined ? current.title : patch.title,
       tokens: patch.tokens ?? current.tokens,
+      passwordHash: patch.passwordHash ?? current.passwordHash,
     };
     this.db
-      .prepare("UPDATE users SET role = ?, title = ?, tokens = ? WHERE id = ?")
-      .run(next.role, next.title, next.tokens, id);
+      .prepare(
+        "UPDATE users SET role = ?, title = ?, tokens = ?, password_hash = ? WHERE id = ?",
+      )
+      .run(next.role, next.title, next.tokens, next.passwordHash, id);
     return this.findUserById(id);
   }
 
@@ -129,5 +132,9 @@ export class SqliteStore implements Store {
 
   async deleteSession(tokenHash: string): Promise<void> {
     this.db.prepare("DELETE FROM sessions WHERE token_hash = ?").run(tokenHash);
+  }
+
+  async deleteSessionsForUser(userId: number): Promise<void> {
+    this.db.prepare("DELETE FROM sessions WHERE user_id = ?").run(userId);
   }
 }

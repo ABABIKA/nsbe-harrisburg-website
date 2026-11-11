@@ -69,6 +69,24 @@ describe("SqliteStore sessions", () => {
     expect(await store.findSession("h1")).toBeNull();
   });
 
+  it("deletes every session for one user and leaves others", async () => {
+    const a = await store.createUser(input("a@x.com"));
+    const b = await store.createUser(input("b@x.com"));
+    await store.createSession({ tokenHash: "a1", userId: a.id, expiresAt: 1 });
+    await store.createSession({ tokenHash: "a2", userId: a.id, expiresAt: 1 });
+    await store.createSession({ tokenHash: "b1", userId: b.id, expiresAt: 1 });
+    await store.deleteSessionsForUser(a.id);
+    expect(await store.findSession("a1")).toBeNull();
+    expect(await store.findSession("a2")).toBeNull();
+    expect(await store.findSession("b1")).not.toBeNull();
+  });
+
+  it("updates the password hash through updateUser", async () => {
+    const u = await store.createUser(input("jane@x.com"));
+    const after = await store.updateUser(u.id, { passwordHash: "new-hash" });
+    expect(after?.passwordHash).toBe("new-hash");
+  });
+
   it("returns null for an unknown session hash", async () => {
     expect(await store.findSession("nope")).toBeNull();
   });

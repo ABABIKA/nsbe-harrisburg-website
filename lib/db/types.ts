@@ -32,6 +32,7 @@ export interface UserPatch {
   role?: Role;
   title?: string | null;
   tokens?: number;
+  passwordHash?: string;
 }
 
 export interface StoredSession {
@@ -54,4 +55,5 @@ export interface Store {
   }): Promise<void>;
   findSession(tokenHash: string): Promise<StoredSession | null>;
   deleteSession(tokenHash: string): Promise<void>;
+  deleteSessionsForUser(userId: number): Promise<void>;
 }

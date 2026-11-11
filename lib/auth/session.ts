@@ -2,6 +2,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { getStore } from "../db";
 import type { User } from "../db/types";
+import { resolveSession } from "./resolve-session";
 import {
   hashSessionToken,
   newSessionToken,
@@ -39,24 +40,5 @@ export async function deleteSession(): Promise<void> {
 // expired cookie. Never throws for a bad cookie.
 export async function readSessionUser(): Promise<User | null> {
   const jar = await cookies();
-  const token = jar.get(SESSION_COOKIE)?.value;
-  if (!token) return null;
-  const store = getStore();
-  const tokenHash = hashSessionToken(token);
-  const session = await store.findSession(tokenHash);
-  if (!session) return null;
-  if (session.expiresAt <= Date.now()) {
-    await store.deleteSession(tokenHash);
-    return null;
-  }
-  const record = await store.findUserById(session.userId);
-  if (!record) return null;
-  return {
-    id: record.id,
-    name: record.name,
-    email: record.email,
-    role: record.role,
-    title: record.title,
-    tokens: record.tokens,
-  };
+  return resolveSession(getStore(), jar.get(SESSION_COOKIE)?.value);
 }

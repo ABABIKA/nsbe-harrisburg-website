@@ -12,6 +12,7 @@ import type { Store, UserRecord } from "../lib/db/types";
 export async function createAdmin(
   store: Store,
   input: { name: string; email: string; password: string; title: string },
+  opts: { promote?: boolean } = {},
 ): Promise<UserRecord> {
   const email = normalizeEmail(input.email);
   if (!email.includes("@")) throw new Error("A valid email is required.");
@@ -24,8 +25,21 @@ export async function createAdmin(
 
   const existing = await store.findUserByEmail(email);
   if (existing) {
-    // Keep the existing password, id, and tokens; only raise the role.
-    return (await store.updateUser(existing.id, { role: "admin", title }))!;
+    // Sign-up is open, so someone else may have registered this email first.
+    // Never hand them admin silently.
+    if (!opts.promote) {
+      throw new Error(
+        "An account with this email already exists. If it is really yours, run again with --promote. " +
+          "That replaces its password with the one you give and signs out every existing session.",
+      );
+    }
+    const updated = await store.updateUser(existing.id, {
+      role: "admin",
+      title,
+      passwordHash: await hashPassword(input.password),
+    });
+    await store.deleteSessionsForUser(existing.id);
+    return updated!;
   }
   return store.createUser({
     name: input.name.trim(),
@@ -37,13 +51,15 @@ export async function createAdmin(
 }
 
 async function main() {
-  const [name, email, password, title] = process.argv.slice(2);
+  const args = process.argv.slice(2);
+  const promote = args.includes("--promote");
+  const [name, email, password, title] = args.filter((a) => a !== "--promote");
   if (!name || !email || !password || !title) {
-    console.error('Usage: create-admin.ts "<name>" "<email>" "<password>" "<title>"');
+    console.error('Usage: create-admin.ts "<name>" "<email>" "<password>" "<title>" [--promote]');
     process.exit(1);
   }
   const { getStore } = await import("../lib/db");
-  const user = await createAdmin(getStore(), { name, email, password, title });
+  const user = await createAdmin(getStore(), { name, email, password, title }, { promote });
   console.log(`Admin ready: ${user.email} (role ${user.role}, title ${user.title ?? "none"})`);
 }
 
