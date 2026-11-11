@@ -17,8 +17,9 @@ export default async function SignupPage({
 
   return (
     <AuthShell
-      eyebrow="Join the member site"
-      title="Create your account."
+      eyebrow="Create an account"
+      lines={["Find your", "place."]}
+      accent="green"
       intro="Your account starts with 0 Torch Tokens. After you sign up, let the vice president know so your tokens can be added."
     >
       <AuthForm

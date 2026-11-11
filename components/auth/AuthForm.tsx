@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState, useEffect, useRef, useState } from "react";
+import ArrowIcon from "./ArrowIcon";
 import {
   loginAction,
   signupAction,
@@ -15,7 +16,7 @@ type Props = {
 };
 
 const field =
-  "mt-1 block w-full rounded-md border-2 border-black bg-white px-3 py-2 text-base text-black focus:outline-none focus-visible:ring-4 focus-visible:ring-black aria-[invalid=true]:border-[#b8423c]";
+  "mt-1.5 block w-full rounded-[6px] border border-[#1d1d1d] bg-white px-3.5 py-3 text-base text-[#0a0b0a] focus:outline-none focus-visible:ring-4 focus-visible:ring-black aria-[invalid=true]:border-2 aria-[invalid=true]:border-[#9a2b1f]";
 
 function Errors({ id, items }: { id: string; items?: string[] }) {
   if (!items?.length) return null;
@@ -56,7 +57,7 @@ export default function AuthForm({ mode, next, showJoinCode }: Props) {
           role="alert"
           tabIndex={-1}
           data-form-error
-          className="rounded-md border-2 border-[#b8423c] bg-white p-3 font-semibold text-[#8f2a25]"
+          className="rounded-[6px] border-2 border-[#9a2b1f] bg-white p-3 font-semibold text-[#8f2a25]"
         >
           Error: {state.message}
         </p>
@@ -137,7 +138,7 @@ export default function AuthForm({ mode, next, showJoinCode }: Props) {
             type="checkbox"
             checked={show}
             onChange={(e) => setShow(e.target.checked)}
-            className="h-4 w-4 accent-black focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[#b8423c]"
+            className="h-4 w-4 accent-black focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-black"
           />
           Show password
         </label>
@@ -168,9 +169,10 @@ export default function AuthForm({ mode, next, showJoinCode }: Props) {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-md bg-[#b8423c] px-4 py-3 text-lg font-bold text-white hover:bg-[#9d3731] focus:outline-none focus-visible:ring-4 focus-visible:ring-black disabled:opacity-60"
+        className="flex w-full items-center justify-between rounded-[10px] bg-[#b84a3f] px-5 py-4 text-[1.2rem] font-bold text-white hover:bg-[#a33f35] focus:outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2 disabled:opacity-60"
       >
         {pending ? "Please wait…" : isSignup ? "Create account" : "Sign in"}
+        <ArrowIcon className="h-5 w-5" />
       </button>
 
       <p className="text-center text-sm">

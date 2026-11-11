@@ -18,7 +18,8 @@ export default async function LoginPage({
   return (
     <AuthShell
       eyebrow="Member login"
-      title="Welcome back."
+      lines={["Welcome", "back."]}
+      accent="red"
       intro="Sign in to see your dashboard, Torch Tokens, and member events."
     >
       <AuthForm mode="login" next={safeNext} />
