@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import {
   loginAction,
   signupAction,
@@ -15,7 +15,7 @@ type Props = {
 };
 
 const field =
-  "mt-1 block w-full rounded-md border-2 border-black bg-white px-3 py-2 text-base text-black focus:outline-none focus-visible:ring-4 focus-visible:ring-[#b8423c]/50 aria-[invalid=true]:border-[#b8423c]";
+  "mt-1 block w-full rounded-md border-2 border-black bg-white px-3 py-2 text-base text-black focus:outline-none focus-visible:ring-4 focus-visible:ring-black aria-[invalid=true]:border-[#b8423c]";
 
 function Errors({ id, items }: { id: string; items?: string[] }) {
   if (!items?.length) return null;
@@ -36,12 +36,26 @@ export default function AuthForm({ mode, next, showJoinCode }: Props) {
   );
   const [show, setShow] = useState(false);
   const errors = state?.errors;
+  const values = state?.values;
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // After a failed submit, move focus to the first field with a problem, or
+  // to the error message, so keyboard and screen reader users land on it.
+  useEffect(() => {
+    if (!state) return;
+    const target = formRef.current?.querySelector<HTMLElement>(
+      '[aria-invalid="true"], [data-form-error]',
+    );
+    target?.focus();
+  }, [state]);
 
   return (
-    <form action={action} noValidate className="space-y-5">
+    <form ref={formRef} action={action} noValidate className="space-y-5">
       {state?.message && (
         <p
           role="alert"
+          tabIndex={-1}
+          data-form-error
           className="rounded-md border-2 border-[#b8423c] bg-white p-3 font-semibold text-[#8f2a25]"
         >
           Error: {state.message}
@@ -58,6 +72,7 @@ export default function AuthForm({ mode, next, showJoinCode }: Props) {
             id="name"
             name="name"
             type="text"
+            defaultValue={values?.name}
             autoComplete="name"
             required
             aria-invalid={!!errors?.name}
@@ -78,6 +93,7 @@ export default function AuthForm({ mode, next, showJoinCode }: Props) {
           id="email"
           name="email"
           type="email"
+          defaultValue={values?.email}
           autoComplete="email"
           required
           aria-invalid={!!errors?.email}
@@ -136,6 +152,7 @@ export default function AuthForm({ mode, next, showJoinCode }: Props) {
             id="joinCode"
             name="joinCode"
             type="text"
+            defaultValue={values?.joinCode}
             autoComplete="off"
             required
             aria-invalid={!!errors?.joinCode}

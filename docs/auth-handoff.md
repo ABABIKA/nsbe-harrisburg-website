@@ -62,6 +62,8 @@ Admin-only functions in `lib/auth/admin.ts`. Any screen that edits members must 
 - `setMemberRole(store, actor, targetId, role)` (refuses to demote the last admin)
 - `setMemberTitle(store, actor, targetId, title)`
 
+The `actor` must always come from `verifySession()` or `requireRole()`, never from form fields or request input.
+
 Each returns `{ ok: true, user }` or `{ ok: false, error }` where error is `forbidden`, `not_found`, `invalid`, or `last_admin`. They re-check the actor's role in the database on every call. Use `getStore()` from `lib/db` and the actor from `verifySession()`.
 
 ## Setup on your computer
@@ -71,6 +73,7 @@ Each returns `{ ok: true, user }` or `{ ok: false, error }` where error is `forb
 3. `npm run dev`, then open `/signup` to make a test account.
 4. To make yourself an admin for testing:
    `npx tsx --env-file-if-exists=.env scripts/create-admin.ts "Your Name" "you@example.com" "A-Password-1" "President"`
+   If that email already has an account, the script refuses and says so (sign-up is open, so someone else could have registered it first). If the account really is yours, add `--promote`: it makes the account admin, **replaces its password** with the one you give, and signs out every existing session.
 5. `npm test` runs the unit tests.
 
 Settings in `.env`:
@@ -79,6 +82,12 @@ Settings in `.env`:
 - `DATABASE_FILE` (default `./data/nsbe.sqlite`): where the local database lives. The `data/` folder and every `.env*` file except `.env.example` are ignored by git. Never commit them.
 
 **Accounts live only on the computer that created them.** A teammate's sign-up will not exist on anyone else's machine. That is fine for the demo and is expected until a hosted database exists.
+
+## Sign-in limits (know these before launch)
+
+- After 5 wrong passwords for one email within 15 minutes, that email cannot sign in until the window passes, even with the right password.
+- Consequence: anyone who knows a member's email can keep that member locked out by failing five times every 15 minutes. That is acceptable for the class demo. Before a real launch, key the limit on email plus the visitor's network address and move the counters into the hosted database.
+- The counters live in memory in one server process. They reset on restart and are not shared between servers.
 
 ## Moving to a real hosted database later
 
