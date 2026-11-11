@@ -8,7 +8,7 @@ export default function PublicWebsiteLink({ className }: { className?: string })
       href="/"
       className={
         className ??
-        "rounded-[8px] border border-[#1d1d1d] bg-white px-4 py-2.5 text-sm font-bold text-[#0a0b0a] focus:outline-none focus-visible:ring-4 focus-visible:ring-black"
+        "rounded-[8px] border border-[#1d1d1d] bg-white px-4 py-2.5 text-sm font-bold text-[#050403] focus:outline-none focus-visible:ring-4 focus-visible:ring-black"
       }
     >
       Public Website

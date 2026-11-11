@@ -16,7 +16,7 @@ type Props = {
 };
 
 const field =
-  "mt-1.5 block w-full rounded-[6px] border border-[#1d1d1d] bg-white px-3.5 py-3 text-base text-[#0a0b0a] focus:outline-none focus-visible:ring-4 focus-visible:ring-black aria-[invalid=true]:border-2 aria-[invalid=true]:border-[#9a2b1f]";
+  "mt-1.5 block w-full rounded-[6px] border border-[#1d1d1d] bg-white px-3.5 py-3 text-base text-[#050403] focus:outline-none focus-visible:ring-4 focus-visible:ring-black aria-[invalid=true]:border-2 aria-[invalid=true]:border-[#9a2b1f]";
 
 function Errors({ id, items }: { id: string; items?: string[] }) {
   if (!items?.length) return null;
@@ -169,7 +169,7 @@ export default function AuthForm({ mode, next, showJoinCode }: Props) {
       <button
         type="submit"
         disabled={pending}
-        className="flex w-full items-center justify-between rounded-[10px] bg-[#b84a3f] px-5 py-4 text-[1.2rem] font-bold text-white hover:bg-[#a33f35] focus:outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2 disabled:opacity-60"
+        className="flex w-full items-center justify-between rounded-[10px] bg-[#c8321a] px-5 py-4 text-[1.2rem] font-bold text-white hover:bg-[#ad2b16] focus:outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2 disabled:opacity-60"
       >
         {pending ? "Please wait…" : isSignup ? "Create account" : "Sign in"}
         <ArrowIcon className="h-5 w-5" />

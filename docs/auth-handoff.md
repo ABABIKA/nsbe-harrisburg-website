@@ -102,6 +102,16 @@ All database access goes through the `Store` interface in `lib/db/types.ts`; onl
 
 The pages, forms, and admin functions do not change.
 
+## Colors and logo used on the login screens
+
+Taken from the NSBE color card the chapter has (swatches as shown on the card):
+
+- Green `#569A52`, red `#F14B2D`, yellow `#E9D85D`, black `#050403`. Cream `#F1F0E8` and white come from the Figma prototype, not the card.
+- The sign-in button fill is a deeper red, `#C8321A`, so white text on it reaches 4.5:1 contrast. The brand red is used for the headline accent and the top stripe.
+- The card's printed hex and RGB numbers do not match its own swatches (for example green is listed as RGB 0,255,0 with hex 4FF00, which is not a valid hex code). Confirm exact values with NSBE national before launch.
+- The chapter logo is `public/images/nsbe-pennstatehbg-logo.jpeg`. Do not stretch, recolor, or edit it. The screens only show it inside its own circle.
+- Colors are written directly in `components/auth/AuthShell.tsx` and `AuthForm.tsx`. When the shared styles land, swap them for the shared color settings.
+
 ## Not built here (on purpose)
 
 - The portal frame (sidebar, top bar, search) and all portal pages.

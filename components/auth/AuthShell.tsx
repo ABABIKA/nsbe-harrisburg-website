@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Barlow_Condensed, Inter } from "next/font/google";
 import type { ReactNode } from "react";
@@ -24,23 +25,39 @@ export default function AuthShell({
 }) {
   return (
     <main
-      className={`${body.className} min-h-screen bg-[#f1f0e8] text-[#0a0b0a] lg:grid lg:grid-cols-[1.1fr_1fr]`}
+      className={`${body.className} min-h-screen bg-[#f1f0e8] text-[#050403] lg:grid lg:grid-cols-[1.1fr_1fr]`}
     >
-      <section className="relative overflow-hidden bg-[#0a0b0a] px-6 py-10 text-white sm:px-12 lg:flex lg:flex-col lg:justify-center lg:px-16 lg:py-20">
+      <div aria-hidden="true" className="fixed inset-x-0 top-0 z-10 flex h-1.5 lg:h-2">
+        <span className="flex-1 bg-[#f14b2d]" />
+        <span className="flex-1 bg-[#e9d85d]" />
+        <span className="flex-1 bg-[#569a52]" />
+        <span className="flex-1 bg-[#050403]" />
+      </div>
+      <section className="relative overflow-hidden bg-[#050403] px-6 py-10 text-white sm:px-12 lg:flex lg:flex-col lg:justify-center lg:px-16 lg:py-20">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -right-72 top-1/2 h-[26rem] w-[26rem] -translate-y-1/2 rounded-full border border-[#8bc077]/80 shadow-[0_0_0_44px_#241d15,0_0_0_96px_#140e0c] lg:-right-52"
+          className="pointer-events-none absolute -right-72 top-1/2 h-[26rem] w-[26rem] -translate-y-1/2 rounded-full border border-[#569a52]/80 shadow-[0_0_0_44px_#241d15,0_0_0_96px_#140e0c] lg:-right-52"
         />
         <div className="relative">
-          <p className="text-sm font-bold tracking-wide text-white/80">
-            NSBE Penn State Harrisburg
-          </p>
+          <div className="flex items-center gap-4">
+            <Image
+              src="/images/nsbe-pennstatehbg-logo.jpeg"
+              alt="NSBE Penn State Harrisburg chapter logo"
+              width={72}
+              height={72}
+              priority
+              className="h-16 w-16 rounded-full sm:h-[72px] sm:w-[72px]"
+            />
+            <p className="text-sm font-bold tracking-wide text-white/90">
+              NSBE Penn State Harrisburg
+            </p>
+          </div>
           <h1
             className={`${display.className} mt-6 text-[clamp(3.5rem,11vw,7.5rem)] uppercase leading-[0.88]`}
           >
             {lines[0]}
             <br />
-            <span className={accent === "red" ? "text-[#c85a4e]" : "text-[#8bc077]"}>
+            <span className={accent === "red" ? "text-[#f14b2d]" : "text-[#569a52]"}>
               {lines[1]}
             </span>
           </h1>
