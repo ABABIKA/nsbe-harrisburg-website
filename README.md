@@ -1,36 +1,181 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NSBE Harrisburg Website Redesign
+
+A website redesign project created for **HCDD 440 at Penn State Harrisburg** in collaboration with the **National Society of Black Engineers (NSBE) Harrisburg chapter**.
+
+The project focuses on improving the chapter’s digital experience for both **public visitors** and **current members** through a redesigned public-facing website and a member dashboard.
+
+## Project Overview
+
+The redesigned NSBE Harrisburg website is intended to make chapter information easier to find, improve usability across devices, and provide members with a more centralized space for chapter-related resources.
+
+The current design direction combines two experiences:
+
+- **Public Website** — introduces NSBE Harrisburg, promotes the organization, highlights events, and provides information for prospective and current members.
+- **Member Dashboard** — provides logged-in members with quick access to chapter information, events, announcements, opportunities, resources, membership information, and Torch Token progress.
+
+The project began with separate landing page and dashboard concepts. Based on stakeholder feedback, both concepts were retained and combined because they serve different user needs.
+
+## Current Features
+
+### Public Website
+- Homepage / landing page
+- Chapter information
+- Upcoming events
+- Calls to action for joining NSBE
+- Officer / leadership information
+- Resources and opportunities
+- Responsive navigation
+- Social media and external chapter links
+
+### Member Experience
+- Member dashboard
+- Upcoming events
+- Announcements
+- Torch Token progress
+- Membership status
+- Opportunities
+- Resources
+- Member profile
+
+Additional functionality and pages may be added as development continues.
+
+## Technology
+
+This project is being developed using:
+
+- **Next.js**
+- **React**
+- **TypeScript**
+- **Tailwind CSS**
+- **Git / GitHub**
+- **Figma** for UI/UX design and prototyping
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone the Repository
+
+```bash
+git clone REPOSITORY-URL-HERE
+```
+
+### 2. Enter the Project Folder
+
+```bash
+cd nsbe-harrisburg-website
+```
+
+### 3. Install Dependencies
+
+```bash
+npm install
+```
+
+### 4. Start the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the local development site at:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```text
+app/
+├── page.tsx
+├── about/
+├── events/
+├── opportunities/
+├── resources/
+├── login/
+└── dashboard/
 
-To learn more about Next.js, take a look at the following resources:
+components/
+├── Navbar.tsx
+├── Footer.tsx
+├── DashboardSidebar.tsx
+└── reusable UI components
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+public/
+└── images/
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The structure may change as development continues.
 
-## Deploy on Vercel
+## Team
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project is being developed by a four-person HCDD 440 student team.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Project Manager
+Responsible for project coordination, development planning, GitHub integration, shared site structure, and maintaining consistency across the final product.
+
+### UI/UX Design
+Responsible for translating research and stakeholder feedback into interface designs and maintaining consistency with the Figma prototype.
+
+### Front-End Development
+Responsible for implementing pages, components, responsive layouts, and interactions using Next.js and React.
+
+### Accessibility & Usability
+Responsible for evaluating usability, responsiveness, semantic structure, keyboard accessibility, content clarity, and consistency with accessibility best practices.
+
+Team members may contribute across multiple areas throughout development.
+
+## Git Workflow
+
+Development should be completed using feature branches rather than working directly on `main`.
+
+Example branches:
+
+```text
+main
+├── feature/homepage
+├── feature/dashboard
+├── feature/public-pages
+└── feature/login-accessibility
+```
+
+### Create a Branch
+
+```bash
+git checkout -b feature/branch-name
+```
+
+### Save Changes
+
+```bash
+git add .
+git commit -m "Describe your changes"
+```
+
+### Push the Branch
+
+```bash
+git push -u origin feature/branch-name
+```
+
+Once the work is ready, create a **Pull Request** on GitHub before merging it into `main`.
+
+## Design Goals
+
+The redesigned site aims to be:
+
+- Easy to navigate
+- Visually consistent
+- Responsive across desktop and mobile devices
+- Accessible using keyboard navigation and semantic HTML
+- Clear for both prospective and current members
+- Consistent with NSBE Harrisburg’s identity and chapter needs
+
+## Project Status
+
+**Currently in development.**
+
+The team has completed initial research, design concepts, stakeholder feedback, and prototype development. Current work focuses on translating the approved design direction into a functional Next.js website.
+
+---
+
+Created for **HCDD 440 — Human-Centered Design & Development, Penn State Harrisburg**.
