@@ -23,4 +23,20 @@ describe("roles", () => {
     expect(isRole("president")).toBe(false);
     expect(isRole(undefined)).toBe(false);
   });
+
+  it("officers and admins can see the e-board area and post announcements, members cannot", () => {
+    for (const p of ["view_eboard", "post_announcements"] as const) {
+      expect(can("member", p)).toBe(false);
+      expect(can("officer", p)).toBe(true);
+      expect(can("admin", p)).toBe(true);
+    }
+  });
+
+  it("only admins can pin announcements or delete other people's", () => {
+    for (const p of ["pin_announcements", "delete_any_announcement"] as const) {
+      expect(can("member", p)).toBe(false);
+      expect(can("officer", p)).toBe(false);
+      expect(can("admin", p)).toBe(true);
+    }
+  });
 });

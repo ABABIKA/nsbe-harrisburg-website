@@ -4,7 +4,9 @@ import { DatabaseSync } from "node:sqlite";
 import type { Role } from "../auth/roles";
 import {
   EmailTakenError,
+  type AnnouncementRecord,
   type NewUser,
+  type User,
   type Store,
   type StoredSession,
   type UserPatch,
@@ -35,6 +37,37 @@ function toRecord(row: Row): UserRecord {
   };
 }
 
+interface AnnouncementRow {
+  id: number;
+  author_id: number;
+  author_name: string;
+  author_role: Role;
+  author_title: string | null;
+  title: string;
+  body: string;
+  pinned: number;
+  created_at: number;
+}
+
+const ANNOUNCEMENT_SELECT = `
+  SELECT a.id, a.author_id, u.name AS author_name, u.role AS author_role,
+         u.title AS author_title, a.title, a.body, a.pinned, a.created_at
+  FROM announcements a JOIN users u ON u.id = a.author_id`;
+
+function toAnnouncement(r: AnnouncementRow): AnnouncementRecord {
+  return {
+    id: r.id,
+    authorId: r.author_id,
+    authorName: r.author_name,
+    authorRole: r.author_role,
+    authorTitle: r.author_title,
+    title: r.title,
+    body: r.body,
+    pinned: r.pinned === 1,
+    createdAt: r.created_at,
+  };
+}
+
 export class SqliteStore implements Store {
   private db: DatabaseSync;
 
@@ -55,6 +88,14 @@ export class SqliteStore implements Store {
         token_hash TEXT PRIMARY KEY,
         user_id INTEGER NOT NULL REFERENCES users(id),
         expires_at INTEGER NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS announcements (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        author_id INTEGER NOT NULL REFERENCES users(id),
+        title TEXT NOT NULL,
+        body TEXT NOT NULL,
+        pinned INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL
       );
     `);
   }
@@ -113,6 +154,26 @@ export class SqliteStore implements Store {
     return row.n;
   }
 
+  async listUsers(search?: string): Promise<User[]> {
+    const term = (search ?? "").trim().toLowerCase();
+    // Escape LIKE wildcards so "%" and "_" are searched literally.
+    const like = `%${term.replace(/[\\%_]/g, (c) => "\\" + c)}%`;
+    const rows = (
+      term
+        ? this.db
+            .prepare(
+              "SELECT * FROM users WHERE lower(name) LIKE ? ESCAPE '\\' OR lower(email) LIKE ? ESCAPE '\\' ORDER BY name COLLATE NOCASE",
+            )
+            .all(like, like)
+        : this.db.prepare("SELECT * FROM users ORDER BY name COLLATE NOCASE").all()
+    ) as unknown as Row[];
+    return rows.map((row) => {
+      const { passwordHash: _unused, ...user } = toRecord(row);
+      void _unused;
+      return user;
+    });
+  }
+
   async createSession(input: {
     tokenHash: string;
     userId: number;
@@ -136,5 +197,43 @@ export class SqliteStore implements Store {
 
   async deleteSessionsForUser(userId: number): Promise<void> {
     this.db.prepare("DELETE FROM sessions WHERE user_id = ?").run(userId);
+  }
+
+  async createAnnouncement(input: {
+    authorId: number;
+    title: string;
+    body: string;
+    pinned: boolean;
+    createdAt?: number;
+  }): Promise<AnnouncementRecord> {
+    const result = this.db
+      .prepare(
+        "INSERT INTO announcements (author_id, title, body, pinned, created_at) VALUES (?, ?, ?, ?, ?)",
+      )
+      .run(input.authorId, input.title, input.body, input.pinned ? 1 : 0, input.createdAt ?? Date.now());
+    return (await this.findAnnouncement(Number(result.lastInsertRowid)))!;
+  }
+
+  async listAnnouncements(): Promise<AnnouncementRecord[]> {
+    const rows = this.db
+      .prepare(`${ANNOUNCEMENT_SELECT} ORDER BY a.pinned DESC, a.created_at DESC, a.id DESC`)
+      .all() as unknown as AnnouncementRow[];
+    return rows.map(toAnnouncement);
+  }
+
+  async findAnnouncement(id: number): Promise<AnnouncementRecord | null> {
+    const row = this.db
+      .prepare(`${ANNOUNCEMENT_SELECT} WHERE a.id = ?`)
+      .get(id) as unknown as AnnouncementRow | undefined;
+    return row ? toAnnouncement(row) : null;
+  }
+
+  async setAnnouncementPinned(id: number, pinned: boolean): Promise<AnnouncementRecord | null> {
+    this.db.prepare("UPDATE announcements SET pinned = ? WHERE id = ?").run(pinned ? 1 : 0, id);
+    return this.findAnnouncement(id);
+  }
+
+  async deleteAnnouncement(id: number): Promise<void> {
+    this.db.prepare("DELETE FROM announcements WHERE id = ?").run(id);
   }
 }

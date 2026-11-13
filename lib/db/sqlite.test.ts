@@ -60,6 +60,30 @@ describe("SqliteStore users", () => {
   });
 });
 
+describe("SqliteStore listUsers", () => {
+  it("lists all members without password hashes, newest names sorted A to Z", async () => {
+    await store.createUser({ ...input("b@x.com"), name: "Bea" });
+    await store.createUser({ ...input("a@x.com"), name: "Ann" });
+    const all = await store.listUsers();
+    expect(all.map((u) => u.name)).toEqual(["Ann", "Bea"]);
+    expect(JSON.stringify(all)).not.toContain("passwordHash");
+  });
+
+  it("filters by a name or email search, ignoring case", async () => {
+    await store.createUser({ ...input("ann@x.com"), name: "Ann Lee" });
+    await store.createUser({ ...input("bo@y.com"), name: "Bo Kim" });
+    expect((await store.listUsers("LEE")).map((u) => u.name)).toEqual(["Ann Lee"]);
+    expect((await store.listUsers("y.com")).map((u) => u.name)).toEqual(["Bo Kim"]);
+    expect(await store.listUsers("zzz")).toEqual([]);
+  });
+
+  it("treats % and _ in the search as plain characters", async () => {
+    await store.createUser({ ...input("ann@x.com"), name: "Ann" });
+    expect(await store.listUsers("%")).toEqual([]);
+    expect(await store.listUsers("_")).toEqual([]);
+  });
+});
+
 describe("SqliteStore sessions", () => {
   it("creates, finds, and deletes a session", async () => {
     const u = await store.createUser(input("jane@x.com"));
@@ -89,5 +113,33 @@ describe("SqliteStore sessions", () => {
 
   it("returns null for an unknown session hash", async () => {
     expect(await store.findSession("nope")).toBeNull();
+  });
+});
+
+describe("SqliteStore announcements", () => {
+  it("creates an announcement and joins the author's name, role, and position", async () => {
+    const a = await store.createUser({ ...input("pat@x.com"), name: "Pat", role: "admin", title: "President" });
+    const post = await store.createAnnouncement({ authorId: a.id, title: "Hello", body: "Body", pinned: false });
+    expect(post).toMatchObject({ authorName: "Pat", authorRole: "admin", authorTitle: "President", title: "Hello", body: "Body", pinned: false });
+    expect((await store.findAnnouncement(post.id))?.title).toBe("Hello");
+  });
+
+  it("lists pinned first, then newest first", async () => {
+    const a = await store.createUser(input("a@x.com"));
+    const old = await store.createAnnouncement({ authorId: a.id, title: "old", body: "b", pinned: false, createdAt: 1000 });
+    const pinnedOld = await store.createAnnouncement({ authorId: a.id, title: "pinned", body: "b", pinned: true, createdAt: 500 });
+    const fresh = await store.createAnnouncement({ authorId: a.id, title: "fresh", body: "b", pinned: false, createdAt: 2000 });
+    const order = (await store.listAnnouncements()).map((x) => x.id);
+    expect(order).toEqual([pinnedOld.id, fresh.id, old.id]);
+  });
+
+  it("pins, unpins, and deletes", async () => {
+    const a = await store.createUser(input("a@x.com"));
+    const post = await store.createAnnouncement({ authorId: a.id, title: "t", body: "b", pinned: false });
+    expect((await store.setAnnouncementPinned(post.id, true))?.pinned).toBe(true);
+    expect((await store.setAnnouncementPinned(post.id, false))?.pinned).toBe(false);
+    expect(await store.setAnnouncementPinned(999, true)).toBeNull();
+    await store.deleteAnnouncement(post.id);
+    expect(await store.findAnnouncement(post.id)).toBeNull();
   });
 });
