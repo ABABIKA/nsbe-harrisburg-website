@@ -16,7 +16,7 @@ type Props = {
 };
 
 const field =
-  "mt-1.5 block w-full rounded-[6px] border border-[#1d1d1d] bg-white px-3.5 py-3 text-base text-[#050403] focus:outline-none focus-visible:ring-4 focus-visible:ring-black aria-[invalid=true]:border-2 aria-[invalid=true]:border-[#9a2b1f]";
+  "mt-1.5 block w-full rounded-[6px] border border-[color:var(--nsbe-black)] bg-white px-3.5 py-3 text-base text-[color:var(--nsbe-black)] focus:outline-none focus-visible:ring-4 focus-visible:ring-[color:var(--nsbe-focus)] aria-[invalid=true]:border-2 aria-[invalid=true]:border-[#9a2b1f]";
 
 function Errors({ id, items }: { id: string; items?: string[] }) {
   if (!items?.length) return null;
@@ -125,7 +125,7 @@ export default function AuthForm({ mode, next, showJoinCode }: Props) {
           className={field}
         />
         {isSignup && (
-          <p id="password-hint" className="mt-1 text-sm text-black/70">
+          <p id="password-hint" className="mt-1 text-sm text-[color:var(--ink-muted)]">
             Use at least 8 characters with a letter and a number. Make a new
             password for this site. Never use your Penn State password.
           </p>
@@ -138,7 +138,7 @@ export default function AuthForm({ mode, next, showJoinCode }: Props) {
             type="checkbox"
             checked={show}
             onChange={(e) => setShow(e.target.checked)}
-            className="h-4 w-4 accent-black focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-black"
+            className="h-4 w-4 accent-black focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--nsbe-focus)]"
           />
           Show password
         </label>
@@ -169,7 +169,7 @@ export default function AuthForm({ mode, next, showJoinCode }: Props) {
       <button
         type="submit"
         disabled={pending}
-        className="flex w-full items-center justify-between rounded-[10px] bg-[#c8321a] px-5 py-4 text-[1.2rem] font-bold text-white hover:bg-[#ad2b16] focus:outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2 disabled:opacity-60"
+        className="flex w-full items-center justify-between rounded-[10px] bg-[color:var(--nsbe-red)] px-5 py-4 text-[1.2rem]! font-bold! text-white hover:brightness-90 focus:outline-none focus-visible:ring-4 focus-visible:ring-[color:var(--nsbe-focus)] focus-visible:ring-offset-2 disabled:opacity-60"
       >
         {pending ? "Please wait…" : isSignup ? "Create account" : "Sign in"}
         <ArrowIcon className="h-5 w-5" />
@@ -181,7 +181,7 @@ export default function AuthForm({ mode, next, showJoinCode }: Props) {
             Already have an account?{" "}
             <Link
               href={next ? `/login?next=${encodeURIComponent(next)}` : "/login"}
-              className="font-bold underline underline-offset-2"
+              className="font-bold underline! underline-offset-2"
             >
               Sign in
             </Link>
@@ -191,7 +191,7 @@ export default function AuthForm({ mode, next, showJoinCode }: Props) {
             New to the member site?{" "}
             <Link
               href={next ? `/signup?next=${encodeURIComponent(next)}` : "/signup"}
-              className="font-bold underline underline-offset-2"
+              className="font-bold underline! underline-offset-2"
             >
               Create an account
             </Link>
