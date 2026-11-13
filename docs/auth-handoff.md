@@ -112,9 +112,30 @@ Taken from the NSBE color card the chapter has (swatches as shown on the card):
 - The chapter logo is `public/images/nsbe-pennstatehbg-logo.jpeg`. Do not stretch, recolor, or edit it. The screens only show it inside its own circle.
 - Colors are written directly in `components/auth/AuthShell.tsx` and `AuthForm.tsx`. When the shared styles land, swap them for the shared color settings.
 
+## The member portal (built from the Figma video)
+
+Everything under `app/portal/` is the signed-in area. The layout (`app/portal/layout.tsx`) draws the sidebar, top bar, and "Skip to main content" link, and checks sign-in. Each page also calls `verifySession()`.
+
+| Page | Address | Notes |
+|---|---|---|
+| Dashboard | `/portal/dashboard` | Membership status, Torch Tokens, next meeting, upcoming events, announcements |
+| Events | `/portal/events` | Links out to Discover East |
+| Announcements | `/portal/announcements` | |
+| Torch Tokens | `/portal/torch-tokens` | Real balance, progress to the 10-token conference goal. History is an empty note until attendance tracking exists |
+| Opportunities | `/portal/opportunities` | |
+| Resources | `/portal/resources` | |
+| Member Profile | `/portal/profile` | Read-only account details |
+| About NSBE | `/portal/about` | |
+| Search | `/portal/search?q=` | Searches events, opportunities, resources |
+| Manage Members | `/portal/admin/members` | Admins only. Edit tokens, roles, and positions |
+
+- **Real data:** name, role, position, and Torch Tokens come from the signed-in account.
+- **Sample content:** events, announcements, opportunities, resources, and the next-meeting card live in `lib/portal/content.ts` and are labelled "sample content" on the pages. Replace them with real information, or feed them from Michael's Discover East events API.
+- **Admin screen:** uses the tested functions in `lib/auth/admin.ts`. Only admins see the "Manage Members" link, and the server re-checks on every change.
+- **Shared look:** shared class strings are in `components/portal/styles.ts`. They use the colors from `app/globals.css`. The global stylesheet resets link colors and button fonts, so portal links and buttons use Tailwind's `!` where they need a color or weight.
+
 ## Not built here (on purpose)
 
-- The portal frame (sidebar, top bar, search) and all portal pages.
-- The officer screen for looking up a member and editing tokens.
-- Automatic Torch Tokens from event attendance.
-- Email verification and password reset by email.
+- Automatic Torch Tokens from event attendance (QR or check-in), and a token history list.
+- Real announcements, opportunities, and resources (sample content only).
+- Editing your own profile, changing your password, email verification, and password reset by email.
