@@ -60,6 +60,30 @@ describe("SqliteStore users", () => {
   });
 });
 
+describe("SqliteStore listUsers", () => {
+  it("lists all members without password hashes, newest names sorted A to Z", async () => {
+    await store.createUser({ ...input("b@x.com"), name: "Bea" });
+    await store.createUser({ ...input("a@x.com"), name: "Ann" });
+    const all = await store.listUsers();
+    expect(all.map((u) => u.name)).toEqual(["Ann", "Bea"]);
+    expect(JSON.stringify(all)).not.toContain("passwordHash");
+  });
+
+  it("filters by a name or email search, ignoring case", async () => {
+    await store.createUser({ ...input("ann@x.com"), name: "Ann Lee" });
+    await store.createUser({ ...input("bo@y.com"), name: "Bo Kim" });
+    expect((await store.listUsers("LEE")).map((u) => u.name)).toEqual(["Ann Lee"]);
+    expect((await store.listUsers("y.com")).map((u) => u.name)).toEqual(["Bo Kim"]);
+    expect(await store.listUsers("zzz")).toEqual([]);
+  });
+
+  it("treats % and _ in the search as plain characters", async () => {
+    await store.createUser({ ...input("ann@x.com"), name: "Ann" });
+    expect(await store.listUsers("%")).toEqual([]);
+    expect(await store.listUsers("_")).toEqual([]);
+  });
+});
+
 describe("SqliteStore sessions", () => {
   it("creates, finds, and deletes a session", async () => {
     const u = await store.createUser(input("jane@x.com"));

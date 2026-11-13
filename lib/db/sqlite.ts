@@ -5,6 +5,7 @@ import type { Role } from "../auth/roles";
 import {
   EmailTakenError,
   type NewUser,
+  type User,
   type Store,
   type StoredSession,
   type UserPatch,
@@ -111,6 +112,26 @@ export class SqliteStore implements Store {
       .prepare("SELECT COUNT(*) AS n FROM users WHERE role = ?")
       .get(role) as unknown as { n: number };
     return row.n;
+  }
+
+  async listUsers(search?: string): Promise<User[]> {
+    const term = (search ?? "").trim().toLowerCase();
+    // Escape LIKE wildcards so "%" and "_" are searched literally.
+    const like = `%${term.replace(/[\\%_]/g, (c) => "\\" + c)}%`;
+    const rows = (
+      term
+        ? this.db
+            .prepare(
+              "SELECT * FROM users WHERE lower(name) LIKE ? ESCAPE '\\' OR lower(email) LIKE ? ESCAPE '\\' ORDER BY name COLLATE NOCASE",
+            )
+            .all(like, like)
+        : this.db.prepare("SELECT * FROM users ORDER BY name COLLATE NOCASE").all()
+    ) as unknown as Row[];
+    return rows.map((row) => {
+      const { passwordHash: _unused, ...user } = toRecord(row);
+      void _unused;
+      return user;
+    });
   }
 
   async createSession(input: {

@@ -48,6 +48,8 @@ export interface Store {
   findUserById(id: number): Promise<UserRecord | null>;
   updateUser(id: number, patch: UserPatch): Promise<UserRecord | null>;
   countUsersWithRole(role: Role): Promise<number>;
+  // Everyone, A to Z by name, without password hashes. `search` matches name or email.
+  listUsers(search?: string): Promise<User[]>;
   createSession(input: {
     tokenHash: string;
     userId: number;
