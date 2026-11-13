@@ -115,3 +115,31 @@ describe("SqliteStore sessions", () => {
     expect(await store.findSession("nope")).toBeNull();
   });
 });
+
+describe("SqliteStore announcements", () => {
+  it("creates an announcement and joins the author's name, role, and position", async () => {
+    const a = await store.createUser({ ...input("pat@x.com"), name: "Pat", role: "admin", title: "President" });
+    const post = await store.createAnnouncement({ authorId: a.id, title: "Hello", body: "Body", pinned: false });
+    expect(post).toMatchObject({ authorName: "Pat", authorRole: "admin", authorTitle: "President", title: "Hello", body: "Body", pinned: false });
+    expect((await store.findAnnouncement(post.id))?.title).toBe("Hello");
+  });
+
+  it("lists pinned first, then newest first", async () => {
+    const a = await store.createUser(input("a@x.com"));
+    const old = await store.createAnnouncement({ authorId: a.id, title: "old", body: "b", pinned: false, createdAt: 1000 });
+    const pinnedOld = await store.createAnnouncement({ authorId: a.id, title: "pinned", body: "b", pinned: true, createdAt: 500 });
+    const fresh = await store.createAnnouncement({ authorId: a.id, title: "fresh", body: "b", pinned: false, createdAt: 2000 });
+    const order = (await store.listAnnouncements()).map((x) => x.id);
+    expect(order).toEqual([pinnedOld.id, fresh.id, old.id]);
+  });
+
+  it("pins, unpins, and deletes", async () => {
+    const a = await store.createUser(input("a@x.com"));
+    const post = await store.createAnnouncement({ authorId: a.id, title: "t", body: "b", pinned: false });
+    expect((await store.setAnnouncementPinned(post.id, true))?.pinned).toBe(true);
+    expect((await store.setAnnouncementPinned(post.id, false))?.pinned).toBe(false);
+    expect(await store.setAnnouncementPinned(999, true)).toBeNull();
+    await store.deleteAnnouncement(post.id);
+    expect(await store.findAnnouncement(post.id)).toBeNull();
+  });
+});
