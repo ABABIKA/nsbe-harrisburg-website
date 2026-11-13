@@ -4,22 +4,21 @@ import PageHeader from "../../../components/portal/PageHeader";
 import SampleNote from "../../../components/portal/SampleNote";
 import { borderColor, card, displayFont, outlineButton, redLink } from "../../../components/portal/styles";
 import { verifySession } from "../../../lib/auth/dal";
+import { getStore } from "../../../lib/db";
 import {
   CONFERENCE_TOKEN_GOAL,
   DISCOVER_EAST_URL,
   NEXT_MEETING,
   portalContent,
 } from "../../../lib/portal/content";
-import { dateParts, firstName, formatDate, roleLabel } from "../../../lib/portal/format";
+import { dateParts, firstName, formatDate, formatTimestamp, roleLabel } from "../../../lib/portal/format";
 
 export const metadata = { title: "Dashboard | NSBE Penn State Harrisburg" };
 
 export default async function DashboardPage() {
   const user = await verifySession();
   const events = portalContent.events.slice(0, 3);
-  const announcements = [...portalContent.announcements]
-    .sort((a, b) => Number(b.pinned ?? false) - Number(a.pinned ?? false))
-    .slice(0, 3);
+  const announcements = (await getStore().listAnnouncements()).slice(0, 3);
 
   return (
     <>
@@ -130,22 +129,26 @@ export default async function DashboardPage() {
             <h2 id="ann-h" className="text-xl font-bold">Announcements</h2>
             <Link href="/portal/announcements" className={`${redLink} text-sm`}>See all</Link>
           </div>
-          <ul className="mt-4 space-y-4">
-            {announcements.map((a) => (
-              <li key={a.id}>
-                <p className="flex flex-wrap items-center gap-2 text-xs text-[color:var(--ink-muted)]">
-                  {a.pinned && (
-                    <span className="rounded-[3px] bg-[color-mix(in_srgb,var(--nsbe-red)_18%,white)] px-1.5 py-0.5 font-bold text-[#7d2118]">
-                      PINNED
-                    </span>
-                  )}
-                  {a.from}, {formatDate(a.date)}
-                </p>
-                <p className="mt-1 font-bold">{a.title}</p>
-                <p className="text-sm text-[color:var(--ink-muted)]">{a.body}</p>
-              </li>
-            ))}
-          </ul>
+          {announcements.length === 0 ? (
+            <p className="mt-4 text-[color:var(--ink-muted)]">No announcements yet. Check back soon.</p>
+          ) : (
+            <ul className="mt-4 space-y-4">
+              {announcements.map((a) => (
+                <li key={a.id}>
+                  <p className="flex flex-wrap items-center gap-2 text-xs text-[color:var(--ink-muted)]">
+                    {a.pinned && (
+                      <span className="rounded-[3px] bg-[color-mix(in_srgb,var(--nsbe-red)_18%,white)] px-1.5 py-0.5 font-bold text-[#7d2118]">
+                        PINNED
+                      </span>
+                    )}
+                    {roleLabel(a.authorRole, a.authorTitle)}, {formatTimestamp(a.createdAt)}
+                  </p>
+                  <p className="mt-1 font-bold">{a.title}</p>
+                  <p className="line-clamp-3 whitespace-pre-line text-sm text-[color:var(--ink-muted)]">{a.body}</p>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
       </div>
       <SampleNote />

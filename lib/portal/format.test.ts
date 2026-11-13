@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dateParts, firstName, formatDate, initials, roleLabel } from "./format";
+import { dateParts, firstName, formatDate, formatTimestamp, initials, roleLabel } from "./format";
 
 describe("initials", () => {
   it("uses first and last name", () => {
@@ -39,5 +39,12 @@ describe("roleLabel", () => {
     expect(roleLabel("admin", null)).toBe("Admin");
     expect(roleLabel("officer", null)).toBe("Officer");
     expect(roleLabel("member", "Ignored title")).toBe("Member");
+  });
+});
+
+describe("formatTimestamp", () => {
+  it("formats a time in milliseconds as a date", () => {
+    expect(formatTimestamp(new Date(2026, 10, 18, 15, 30).getTime())).toBe("Nov 18, 2026");
+    expect(formatTimestamp(new Date(2026, 0, 1, 0, 5).getTime())).toBe("Jan 1, 2026");
   });
 });

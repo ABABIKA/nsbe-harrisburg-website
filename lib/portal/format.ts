@@ -37,3 +37,9 @@ export function roleLabel(role: Role, title: string | null): string {
   if (role === "member") return "Member";
   return title ?? (role === "admin" ? "Admin" : "Officer");
 }
+
+// A time in milliseconds (as stored for announcements) shown as "Nov 18, 2026".
+export function formatTimestamp(ms: number): string {
+  const d = new Date(ms);
+  return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}

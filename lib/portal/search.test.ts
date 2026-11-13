@@ -6,7 +6,6 @@ const content: PortalContent = {
   events: [
     { id: "e1", title: "Weekly GBM", category: "General body meeting", date: "2026-11-18", time: "11:30 AM", location: "Olmsted E243", summary: "Meet the chapter." },
   ],
-  announcements: [],
   opportunities: [
     { id: "o1", kind: "Internship", title: "Engineering Co-op Program", deadline: "April 30", url: "https://example.com" },
   ],

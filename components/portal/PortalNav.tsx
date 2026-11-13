@@ -4,7 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { dotColor, focusRing } from "./styles";
 
-export type NavItem = { href: string; label: string; dot: keyof typeof dotColor };
+export type NavItem = {
+  href: string;
+  label: string;
+  dot: keyof typeof dotColor;
+  group?: string; // small heading shown above this item
+};
 
 export function PortalNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
@@ -15,6 +20,11 @@ export function PortalNav({ items }: { items: NavItem[] }) {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <li key={item.href}>
+              {item.group ? (
+                <p className="px-3 pb-1 pt-5 text-xs font-bold uppercase tracking-widest text-white/60">
+                  {item.group}
+                </p>
+              ) : null}
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}

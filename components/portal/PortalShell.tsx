@@ -47,9 +47,18 @@ function Brand() {
 }
 
 export default function PortalShell({ user, children }: { user: User; children: React.ReactNode }) {
-  const items = can(user.role, "edit_tokens")
-    ? [...BASE_ITEMS, { href: "/portal/admin/members", label: "Manage Members", dot: "green" as const }]
-    : BASE_ITEMS;
+  const items: NavItem[] = [...BASE_ITEMS];
+  if (can(user.role, "view_eboard")) {
+    items.push({ href: "/portal/eboard", label: "E-Board Meetings", dot: "yellow", group: "Officers" });
+  }
+  if (can(user.role, "edit_tokens")) {
+    items.push({
+      href: "/portal/admin/members",
+      label: "Manage Members",
+      dot: "green",
+      group: can(user.role, "view_eboard") ? undefined : "Officers",
+    });
+  }
   const label = roleLabel(user.role, user.title);
 
   return (

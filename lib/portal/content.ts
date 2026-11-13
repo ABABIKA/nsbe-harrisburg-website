@@ -1,7 +1,8 @@
 // SAMPLE CONTENT for the member portal. Nothing here is connected to a real
 // source yet. Replace these lists (or load them from the events API and a
-// database) when the chapter has real announcements, opportunities, and
-// resources. Pages show a "sample content" note while these are in use.
+// database) when the chapter has real events, opportunities, and resources.
+// Pages show a "sample content" note while these are in use.
+// (Announcements are real: officers post them in the portal.)
 
 export const DISCOVER_EAST_URL =
   "https://psuharrisburg.campuslabs.com/engage/organization/national-society-of-black-engineers";
@@ -14,15 +15,6 @@ export interface EventItem {
   time: string;
   location: string;
   summary: string;
-}
-
-export interface Announcement {
-  id: string;
-  from: string;
-  date: string; // ISO date
-  title: string;
-  body: string;
-  pinned?: boolean;
 }
 
 export interface Opportunity {
@@ -42,7 +34,6 @@ export interface Resource {
 
 export interface PortalContent {
   events: EventItem[];
-  announcements: Announcement[];
   opportunities: Opportunity[];
   resources: Resource[];
 }
@@ -95,30 +86,6 @@ export const portalContent: PortalContent = {
       summary: "Build stronger resumes, practice introductions, and prepare for engineering opportunities.",
     },
   ],
-  announcements: [
-    {
-      id: "a1",
-      from: "Secretary",
-      date: "2026-11-10",
-      title: "Chapter meeting room update",
-      body: "Our next GBM will meet in Olmsted E243. Bring your Penn State ID for check-in.",
-      pinned: true,
-    },
-    {
-      id: "a2",
-      from: "President",
-      date: "2026-11-09",
-      title: "Regional conference interest form",
-      body: "Complete the member interest form this week if you plan to attend the regional conference.",
-    },
-    {
-      id: "a3",
-      from: "Treasurer",
-      date: "2026-11-08",
-      title: "National dues reminder",
-      body: "National dues are paid through your NSBE national account. Ask the treasurer if you need help.",
-    },
-  ],
   opportunities: [
     { id: "o1", kind: "Internship", title: "Engineering Co-op Program", deadline: "Deadline April 30", url: DISCOVER_EAST_URL },
     { id: "o2", kind: "Scholarship", title: "NSBE Academic Excellence Award", deadline: "Deadline May 12", url: DISCOVER_EAST_URL },
@@ -129,4 +96,18 @@ export const portalContent: PortalContent = {
     { id: "r2", title: "Interview preparation", summary: "Practice questions and tips for technical and behavioral interviews.", url: DISCOVER_EAST_URL },
     { id: "r3", title: "Study group schedule", summary: "Find a peer study session for your engineering courses.", url: DISCOVER_EAST_URL },
   ],
+};
+
+// Chapter social media. Put the real addresses here. Leave `url` as null
+// until the chapter has one and the page shows "link coming soon".
+export const SOCIAL_LINKS: { name: string; url: string | null }[] = [
+  { name: "LinkedIn", url: null },
+  { name: "Instagram", url: null },
+];
+
+// SAMPLE: replace with the real e-board meeting schedule.
+export const EBOARD_MEETING = {
+  title: "E-Board meeting",
+  when: "Day and time to be set by the president",
+  where: "Location to be set",
 };

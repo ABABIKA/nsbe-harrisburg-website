@@ -49,8 +49,8 @@ Both accept a `className` to match the shared styles.
 | Role | Who | Can do |
 |---|---|---|
 | `member` | Anyone who signs up | Own dashboard, profile, tokens |
-| `officer` | Everyone on the e-board | Same as member, plus officer-only features added later |
-| `admin` | President and vice president | Everything, plus edit Torch Tokens and change roles and titles |
+| `officer` | Everyone on the e-board | Same as member, plus the E-Board Meetings page and posting announcements (can delete their own) |
+| `admin` | President and vice president | Everything, plus edit Torch Tokens, change roles and titles, pin announcements, and delete anyone's announcement |
 
 Each account also has a free-text `title` such as "Treasurer". It is a label only. Permissions come from the role. The permission table is `lib/auth/roles.ts`; to give officers a power later, add it there.
 
@@ -120,22 +120,30 @@ Everything under `app/portal/` is the signed-in area. The layout (`app/portal/la
 |---|---|---|
 | Dashboard | `/portal/dashboard` | Membership status, Torch Tokens, next meeting, upcoming events, announcements |
 | Events | `/portal/events` | Links out to Discover East |
-| Announcements | `/portal/announcements` | |
+| Announcements | `/portal/announcements` | Real posts saved in the database. Officers and admins post, admins pin and delete any post |
 | Torch Tokens | `/portal/torch-tokens` | Real balance, progress to the 10-token conference goal. History is an empty note until attendance tracking exists |
 | Opportunities | `/portal/opportunities` | |
 | Resources | `/portal/resources` | |
 | Member Profile | `/portal/profile` | Read-only account details |
 | About NSBE | `/portal/about` | |
 | Search | `/portal/search?q=` | Searches events, opportunities, resources |
+| E-Board Meetings | `/portal/eboard` | Officers and admins only. Next meeting, roster of everyone with the officer or admin role, link to post an announcement. Meeting time is sample text in `lib/portal/content.ts` |
 | Manage Members | `/portal/admin/members` | Admins only. Edit tokens, roles, and positions |
 
 - **Real data:** name, role, position, and Torch Tokens come from the signed-in account.
-- **Sample content:** events, announcements, opportunities, resources, and the next-meeting card live in `lib/portal/content.ts` and are labelled "sample content" on the pages. Replace them with real information, or feed them from Michael's Discover East events API.
+- **Sample content:** events, opportunities, resources, the next-meeting card, and the e-board meeting time live in `lib/portal/content.ts` and are labelled "sample content" on the pages. Replace them with real information, or feed them from Michael's Discover East events API.
 - **Admin screen:** uses the tested functions in `lib/auth/admin.ts`. Only admins see the "Manage Members" link, and the server re-checks on every change.
 - **Shared look:** shared class strings are in `components/portal/styles.ts`. They use the colors from `app/globals.css`. The global stylesheet resets link colors and button fonts, so portal links and buttons use Tailwind's `!` where they need a color or weight.
+
+## Photos, socials, and announcements
+
+- **Photo slideshow:** drop pictures into `public/images/gallery/`. See `docs/photo-guide.md`. It appears on the About NSBE page.
+- **Social links:** set the LinkedIn and Instagram addresses in `SOCIAL_LINKS` in `lib/portal/content.ts`. Until a link is set, the page shows "link coming soon".
+- **Announcements** are stored in the database (the `announcements` table), so like accounts they only exist on the computer that made them until the hosted database is set up. The rules (who can post, pin, delete) are in `lib/auth/announcements.ts` and the permission table in `lib/auth/roles.ts`.
+- **Meet the E-Board and past events** sections are not built yet. They need the officers' photos and the past-event photos.
 
 ## Not built here (on purpose)
 
 - Automatic Torch Tokens from event attendance (QR or check-in), and a token history list.
-- Real announcements, opportunities, and resources (sample content only).
+- Real opportunities and resources (sample content only), and the Meet the E-Board and past events galleries.
 - Editing your own profile, changing your password, email verification, and password reset by email.
