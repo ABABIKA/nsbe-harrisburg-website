@@ -35,6 +35,18 @@ export interface UserPatch {
   passwordHash?: string;
 }
 
+export interface AnnouncementRecord {
+  id: number;
+  authorId: number;
+  authorName: string;
+  authorRole: Role;
+  authorTitle: string | null;
+  title: string;
+  body: string;
+  pinned: boolean;
+  createdAt: number; // ms since epoch
+}
+
 export interface StoredSession {
   userId: number;
   expiresAt: number;
@@ -48,6 +60,8 @@ export interface Store {
   findUserById(id: number): Promise<UserRecord | null>;
   updateUser(id: number, patch: UserPatch): Promise<UserRecord | null>;
   countUsersWithRole(role: Role): Promise<number>;
+  // Everyone, A to Z by name, without password hashes. `search` matches name or email.
+  listUsers(search?: string): Promise<User[]>;
   createSession(input: {
     tokenHash: string;
     userId: number;
@@ -56,4 +70,16 @@ export interface Store {
   findSession(tokenHash: string): Promise<StoredSession | null>;
   deleteSession(tokenHash: string): Promise<void>;
   deleteSessionsForUser(userId: number): Promise<void>;
+  createAnnouncement(input: {
+    authorId: number;
+    title: string;
+    body: string;
+    pinned: boolean;
+    createdAt?: number;
+  }): Promise<AnnouncementRecord>;
+  // Pinned first, then newest first.
+  listAnnouncements(): Promise<AnnouncementRecord[]>;
+  findAnnouncement(id: number): Promise<AnnouncementRecord | null>;
+  setAnnouncementPinned(id: number, pinned: boolean): Promise<AnnouncementRecord | null>;
+  deleteAnnouncement(id: number): Promise<void>;
 }
