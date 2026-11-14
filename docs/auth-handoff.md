@@ -104,13 +104,12 @@ The pages, forms, and admin functions do not change.
 
 ## Colors and logo used on the login screens
 
-Taken from the NSBE color card the chapter has (swatches as shown on the card):
+The login screens use the team's shared color settings from `app/globals.css` (`--nsbe-black`, `--nsbe-cream`, `--nsbe-red`, `--nsbe-green`, `--nsbe-yellow`, `--nsbe-focus`, `--ink-muted`, `--border-light`), so they change automatically if the shared palette changes. Those values came from the Figma design and are marked provisional until NSBE confirms them.
 
-- Green `#569A52`, red `#F14B2D`, yellow `#E9D85D`, black `#050403`. Cream `#F1F0E8` and white come from the Figma prototype, not the card.
-- The sign-in button fill is a deeper red, `#C8321A`, so white text on it reaches 4.5:1 contrast. The brand red is used for the headline accent and the top stripe.
-- The card's printed hex and RGB numbers do not match its own swatches (for example green is listed as RGB 0,255,0 with hex 4FF00, which is not a valid hex code). Confirm exact values with NSBE national before launch.
+- The NSBE color card the chapter has shows slightly different swatches (red `#F14B2D`, green `#569A52`, yellow `#E9D85D`, black `#050403`), and its printed hex and RGB numbers do not match its own swatches. Confirm the official values with NSBE national, then update `app/globals.css` once.
+- White text on the red button is about 4.8:1 contrast with the shared red.
+- The global stylesheet resets button fonts and removes link underlines. The login components use Tailwind's `!` (important) on those few properties so buttons stay bold and links stay underlined. Keep that when restyling.
 - The chapter logo is `public/images/nsbe-pennstatehbg-logo.jpeg`. Do not stretch, recolor, or edit it. The screens only show it inside its own circle.
-- Colors are written directly in `components/auth/AuthShell.tsx` and `AuthForm.tsx`. When the shared styles land, swap them for the shared color settings.
 
 ## Not built here (on purpose)
 
